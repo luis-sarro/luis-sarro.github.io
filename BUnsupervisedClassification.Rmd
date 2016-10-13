@@ -8,10 +8,7 @@ output:
       collapsed: false
     include:
       before_body: [footer.html]
-<<<<<<< HEAD
       after_body: [footer.html]
-=======
->>>>>>> 974e6588f58db056f3d76672636cfb9c01e9caf2
 
 ---
 

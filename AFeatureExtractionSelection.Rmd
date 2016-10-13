@@ -8,10 +8,7 @@ output:
       collapsed: false
     include:
       before_body: [footer.html]
-<<<<<<< HEAD
       after_body: [footer.html]
-=======
->>>>>>> 974e6588f58db056f3d76672636cfb9c01e9caf2
 
 ---
 
@@ -863,8 +860,7 @@ library(rgl)
 pal <- colorRampPalette(c("red","blue"),space="rgb")
 col <- SetupPalette(df[,1062])
 pch=0.6+(StPa[,2]+1)/6
-plot3d(lle$X[,1],lle$Y[,2],lle$Y[,3],col=col,size=pch,ty="s")
-
+plot3d(lle$Y[,1],lle$Y[,2],lle$Y[,3],col=col,size=pch,ty="s")
 ```
 
 ### Diffusion Maps
@@ -909,10 +905,12 @@ In R, we have the diffusionMap package (coded by an astrophysicist) which comput
 ```{r, webgl=TRUE}
 
 library("diffusionMap")
-library(rgl)
+knit_hooks$set(webgl = hook_webgl)
 
 dists <- dist(df2)
-clusters <- diffuse(dists, eps.val = epsilonCompute(dists), # The Gaussian kernel variance
+clusters <- diffuse(dists, 
+#                    eps.val = epsilonCompute(dists), # The Gaussian kernel variance
+                    eps.val = 0.05, # The Gaussian kernel variance
         neigen = NULL, # the target space dimensionality: default is 95% drop in eigenvalue  
         t = 0, # Number of andom walk steps before actually calculating eigenvectors
         maxdim = 50, 
@@ -922,7 +920,7 @@ clusters <- diffuse(dists, eps.val = epsilonCompute(dists), # The Gaussian kerne
 pal <- colorRampPalette(c("red","blue"),space="rgb")
 col <- SetupPalette(df[,1062])
 pch=0.6+(StPa[,2]+1)/6
-#plot3d(lle$X[,1],lle$X[,2],lle$X[,3],col=col,size=pch,ty="s")
+plot3d(clusters$X[,1],clusters$X[,2],clusters$X[,3],col=col,size=pch,ty="s")
 
 
 ```
