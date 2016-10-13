@@ -1,6 +1,14 @@
 ---
-title: "Index"
-output: html_document
+title: "Luis' Home"
+output: 
+  html_document:
+    highlight: tango
+    toc: true
+    toc_float:
+      collapsed: false
+    include:
+      before_body: [footer.html]
+      after_body: [footer.html]
 ---
 
 <style type="text/css">
