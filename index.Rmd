@@ -17,7 +17,10 @@ output: html_document
 <div class="row" style="padding-top: 200px;">
 </div>
 
+# ICCUB School Lectures by Luis M. Sarro
+Machine Learning and Data Mining in Physics
+
 ```{r}
-rmarkdown::clean_site()
-rmarkdown::render_site()
+#rmarkdown::clean_site()
+#rmarkdown::render_site()
 ```

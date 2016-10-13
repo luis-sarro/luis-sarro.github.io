@@ -843,7 +843,7 @@ These low-dimensional coordinates are then returned.
 
 ```{r, webgl=TRUE}
 library(knitr)
-#knit_hooks$set(webgl = hook_webgl)
+knit_hooks$set(webgl = hook_webgl)
 
 library(lle)
 
@@ -888,9 +888,38 @@ $$
 
 where similar points will have large $s_{ij}$ and hence we will need to assign them close compressed coordinates $f$, and dissimilar points will have $s(ij)\approx 0$ and therefore, their compress coordinates may differ significantly.
 
-This minimization problem can be cast into an eigenvalue problem, just like in the LLE case.
+This minimization problem can be cast into an eigenvalue problem, just like in the LLE case:
 
+$$
+\phi(f) = \mathbb{f}^T(\mathbb{I}-\mathbb{A})\mathbb{f}
+$$
 
-```{r}
+We call $\mathbb{L}=\mathbb{I}-\mathbb{A}$ the graph Laplacian (although there are other definitions of a graph Laplacian as we will see tomorrow), and minimizing $\phi(f)$ is equivalent to minimizing $f^T(\mathbb{I}-\mathbb{A})f$ subject to the constraint that $f^Tf=1$ to avoid the trivial minimum at $f=0$. So after all, we want the $\mathbb{f}$ coordinates that fulfil $\mathbb{L}\mathbb{f}=\lambda\mathbb{f}$.  
+
+Given that $\mathbb{S}$ is row normalized, it has a trivial eigenvector $\mathbb{1}$ with eigenvalue 1. Therefore, $\mathbb{L}$ has an eigenvector $\mathbb{1}$ with eigenvalue 0. Since all other eigenvectors have to be orthogonal to $\mathbb{1}$ they will have to include positive and negative entries. This is key for something we will discuss tomorrow in the context of Spectral Clustering. 
+
+In R, we have the diffusionMap package (coded by an astrophysicist) which computes $S$ using the Gaussian kernel. 
+
+```{r, webgl=TRUE}
+
 library("diffusionMap")
+library(rgl)
+
+dists <- dist(df2)
+clusters <- diffuse(dists, eps.val = epsilonCompute(dists), # The Gaussian kernel variance
+        neigen = NULL, # the target space dimensionality: default is 95% drop in eigenvalue  
+        t = 0, # Number of andom walk steps before actually calculating eigenvectors
+        maxdim = 50, 
+        delta=10^-5) # Set lower values to zero to speed up calculations
+
+
+pal <- colorRampPalette(c("red","blue"),space="rgb")
+col <- SetupPalette(df[,1062])
+pch=0.6+(StPa[,2]+1)/6
+#plot3d(lle$X[,1],lle$X[,2],lle$X[,3],col=col,size=pch,ty="s")
+
+
 ```
+
+
+

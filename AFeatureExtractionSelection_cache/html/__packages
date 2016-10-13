@@ -10,10 +10,5 @@ bnlearn
 rpart
 mvtnorm
 ica
-scatterplot3d
-MASS
-snow
-snowfall
-lle
-rgl
 diffusionMap
+rgl

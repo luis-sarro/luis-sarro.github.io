@@ -599,17 +599,17 @@ $$d_{i}=\sum_{j=1}^{n}s(i,j) $$
 
 ### Spectral clustering with the unnormalized Laplacian
 
-![excerpt from the [tutorial by Ulrike von Luxburg](http://link.springer.com/article/10.1007/s11222-007-9033-z)](images/unnormalized.png)
+![Excerpt from the [tutorial by Ulrike von Luxburg](http://link.springer.com/article/10.1007/s11222-007-9033-z)](images/unnormalized.png)
 
 The (justified) hope is that the new space of characteristics is more separable than the original one. The new space of characteristics is 
 
 ### Spectral clustering with the normalized symmetric Laplacian
 
-![excerpt from the [tutorial by Ulrike von Luxburg](http://link.springer.com/article/10.1007/s11222-007-9033-z)](images/normalized1.png)
+![Excerpt from the [tutorial by Ulrike von Luxburg](http://link.springer.com/article/10.1007/s11222-007-9033-z)](images/normalized1.png)
 
 ### Spectral clustering with the normalized random walk Laplacian
 
-![excerpt from the [tutorial by Ulrike von Luxburg](http://link.springer.com/article/10.1007/s11222-007-9033-z)](images/normalized2.png)
+![Excerpt from the [tutorial by Ulrike von Luxburg](http://link.springer.com/article/10.1007/s11222-007-9033-z)](images/normalized2.png)
 
 
 
@@ -624,6 +624,19 @@ The (justified) hope is that the new space of characteristics is more separable 
 
 ## Clustering evaluation measures
 
+### Connectedness
+
+![Excerpt from the R clValid [package description] (ftp://cran.r-project.org/pub/R/web/packages/clValid/vignettes/clValid.pdf)](images/connectedness.jpg)
+
+### Silhouette width
+
+![](images/silhouette1.jpg)
+
+![Excerpt from the R clValid [package description] (ftp://cran.r-project.org/pub/R/web/packages/clValid/vignettes/clValid.pdf)](images/silhouette2.jpg)
+
+### Dunn index
+
+![Excerpt from the R clValid [package description] (ftp://cran.r-project.org/pub/R/web/packages/clValid/vignettes/clValid.pdf)](images/dunn.jpg)
 
 
 #############################################################
