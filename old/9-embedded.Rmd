@@ -1,0 +1,19 @@
+---
+title: "9-embedded"
+author: "Luis M. Sarro"
+date: "27 de septiembre de 2016"
+output: html_document
+---
+
+
+<div class="row" style="padding-top: 100px;">
+</div>
+
+
+```{r }
+
+#accu <- random.forest.importance(teff~., df, importance.type = 1)
+#node.impu <- random.forest.importance(teff~., df, importance.type = 2)
+
+
+```

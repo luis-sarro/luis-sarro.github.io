@@ -1,0 +1,71 @@
+---
+title: "The curse of dimensionality"
+output: html_document
+---
+
+<div class="row" style="padding-top: 100px;">
+</div>
+
+# The concept
+
+## An example
+
+```{r echo=FALSE}
+require(plotrix)
+```
+
+Imagine that we are dealing with Gaia RVS spectra: 
+```{r echo=FALSE}
+n <- 10000
+```
+
+These spectra are characterized by a wavelength coverage of 845–872 nm with R=11500. 
+
+![](images/RVSexample.jpg)
+
+As you can see, the range is small but contains a number of spectral lines that are important diagnostics of the thermodynamic state of the stellar atmosphere.
+
+Let us leave the physical analysis of the spectral lines for now and concentrate in the problem of handling feature spaces of the size of an RVS spectrum. It typically contains circa `r n` fluxes, many of which contain no information about the stellar physical parameters. This represents a `r n`-dimensional space. 
+
+Now, imagine a set of example RVS spectra from stars of many different temperatures (surface gravities, metallicities...). Our aim is to construct a model that predicts temperatures from an observed spectrum. Let us do it using one of the most simple models at hand: the k-nearest neighbours (kNN). kNN will receive an observed spectrum and look for the k closest spectra in the set of examples. What do you think would be a reasonable value for k? Let us start with k=1: we will attach to the observed spectrum the temperature of the example that is closest in some to-be-determined sense.
+
+Now, for the sake of clarity, let us rescale each observed flux between 0 and 1. This is not necessary, but helps visualize the problem. We, of course, use the same rescaling for the observed spectrum and for the training set.
+
+After rescaling, our data set occupies a hypercube of `r n`dimensions with unit side. 
+
+Now, let us ask ourselves how many examples do we need to ensure that the closest example (in the to-be-determined sense) is not further than one particular example: one example that differs from our observed spectrum by a 10% in each flux. 
+
+If our spectra had only 2 measured fluxes, this furthest allowed example would be at a distance equal to $\sqrt{0.1^2+0.1^2}$=`r sqrt(0.1^2+0.1^2)`.
+
+```{r}
+plot(cbind(0,0),xlim=c(0,1),ylim=c(0,1),xlab="feature #1",ylab="feature #2",col="white")
+points(cbind(0.6,0.3),pch=16,col="blue")
+r <- sqrt(0.1^2+0.1^2)
+draw.circle(0.6,0.3,r)
+```
+
+How many examples do we need to ensure that there is always an example within a radius of `r sqrt(0.1^2+0.1^2)`? Well, the total area of the square is 1, and that of the circle is $\pi*r^2$=`r pi*r^2` so we need $\frac{1}{\pi*r^2}$=`r 1/(pi*r^2)`.
+
+That is roughly 16 examples distributed homogeneously in the 2D square.
+
+Let us now look at the true RVS space. The hypercube volume still is 1, but the volume of the hypersphere in $n$ dimensions is now $\frac{2\cdot r^d*\pi^{n/2}}{\Gamma(n/2)}$. Our RVS spectra have `r n` fluxes,  so if we still enforce that the farthest example is at most at a 10% in each dimension, the examples have to be closer than $$d=\sqrt{\sum_{i=1}^{10000} 0.1^2}.$$ That is, there has to be an example at a distance d<`r sqrt(10000*0.1^2)`.
+
+How many examples do we need to ensure that there is at least one within a circle of radius `r sqrt(10000*0.1^2)`? 
+
+A hypersphere in `r n` dimensions of radius `r sqrt(10000*0.1^2)` has a volume equal to 
+```{r} 
+r <- sqrt(10000*0.1^2)
+logVsphere <- log(2)+n*log(r)+(n/2)*log(pi)-lgamma(n/2)
+print(logVsphere)
+```
+
+So (in the hypothesis of training examples distributed homogeneously in the hypercube), we would need 
+
+$$\frac{1}{\exp(logVsphere)} $$ examples or, in natural logarithmic units (otherwise I get an infinity in R)
+
+we would need 10^`r as.integer(log(1)-logVsphere)` examples. This is just unfeasible.
+
+So if we go kNN, it is unthinkable that we can gather a large enough set of training examples such that the closest example is at a distance shorter than that implied by a 10% difference in each feature. A10%! That is a lot.
+
+There are other ways to visualize this curse-of-dimensionality. But in practice they all imply an exponentially increasing training set size with increasing space dimensionality. Or conversely, it implies that for a fixed training set size, the predictive power degrades with the dimensionality of the space (the so-called Hughes phenomenon). 
+

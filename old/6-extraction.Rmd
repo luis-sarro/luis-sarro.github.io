@@ -1,0 +1,32 @@
+---
+title: "6-extraction"
+author: "Luis M. Sarro"
+date: "27 de septiembre de 2016"
+output: html_document
+---
+
+
+<div class="row" style="padding-top: 100px;">
+</div>
+
+```{r }
+
+load(".RData")
+library(FSelector)
+library(scales)
+
+teff <- StPa[,1]
+df <- data.frame(cbind(Spec,teff))
+
+# For discrete variables (try with the 2D/3D XOR problem)
+#chi.squared(class~.,data1)
+
+# 
+score <- linear.correlation(teff~.,df)
+col <- SetupPalette(score[,1])
+par(mar=c(6,6,6,6))
+plot(as.numeric(Spec[1,]),pch=".",col=alpha(col,0.2),ylim=c(0.0005,0.001), xlab="Pixel Number",ylab="Normalized Flux")
+
+
+
+```

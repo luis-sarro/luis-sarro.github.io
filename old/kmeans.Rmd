@@ -1,0 +1,268 @@
+---
+title: "K-Means"
+author: "Luis M. Sarro"
+date: "27 de septiembre de 2016"
+output: html_document
+---
+
+
+
+<div class="row" style="padding-top: 100px;">
+</div>
+
+```{r }
+library("mvtnorm")
+set.seed(10)
+setA <- rmvnorm(1000,c(0,0),matrix(c(1,0,0,1),2,2))
+setB <- rmvnorm(1000,c(3,3),matrix(c(1,0,0,1),2,2))
+mock.data <- rbind(setA,setB)
+plot(mock.data)
+
+```
+
+```{r }
+rc <- sample(1:dim(mock.data)[1],2)
+plot(mock.data)
+points(mock.data[rc,],pch=16,col="seagreen",cex=2)
+```
+
+```{r }
+
+d <- function(center,data){
+  s1 <- t(apply(data,1,"-",center))
+  s2 <- s1^2
+  s3 <- apply(s2,1,sum)
+  d <- sqrt(s3)
+  return(d)
+}
+
+E <- function(data,centres){
+  n.data <- dim(data)[1]
+  n.dims <- dim(data)[2]
+  n.cl <- dim(centres)[1] 
+  dists <- matrix(NA,n.data,n.cl)
+  for (i in 1:n.cl) dists[,i] <- d(centres[i,],data)
+  cluster <- apply(dists,1,which.min)
+  return(cluster)
+  }
+
+centres <- mock.data[rc,]
+cluster <- E(mock.data,centres)
+
+plot(mock.data,pch=16,col=cluster)
+points(mock.data[rc,],pch=16,col="seagreen",cex=2)
+
+```
+
+```{r }
+
+M <- function(data,cluster){
+  labels <- unique(cluster)
+  n.cl <- length(labels)
+  n.dims <- dim(data)[2]
+  means <- matrix(NA,n.cl,n.dims)
+  for (i in 1:n.cl)  means[i,] <- apply(data[cluster==labels[i],],2,mean)
+  return(means)
+}
+
+means <- M(mock.data,cluster)
+
+plot(mock.data,pch=16,col=cluster)
+points(mock.data[rc,],pch=16,col="seagreen",cex=2)
+points(means,pch=16,col="green",cex=2)
+
+##########################
+
+cluster <- E(mock.data,means)
+plot(mock.data,pch=16,col=cluster)
+points(means,pch=16,col="seagreen",cex=2)
+
+km <- kmeans(mock.data,2)
+plot(mock.data,col=km$cluster,pch=16)
+```
+
+```{r }
+
+data <- read.table("OGLE.dat",sep=",",header=T)
+attach(data)
+
+plot(logP,WI,pch=".")
+
+mask <- (logP >0.754 & logP < 0.76) | (logP >0.827 & logP < 0.833) | (logP >0.872 & logP < 0.873)
+data <- data[!mask,]
+attach(data)
+plot(data[,1],data[,5],pch=".")
+
+km.ogle <- kmeans(data,10)
+plot(logP,WI,pch=".",col=km.ogle$cluster)
+km.ogle <- kmeans(data,25)
+plot(logP,WI,pch=".",col=km.ogle$cluster)
+set.seed(5)
+km.ogle <- kmeans(data,25,iter.max = 20)
+plot(logP,WI,pch=".",col=km.ogle$cluster)
+points(km.ogle$centers[,c(1,5)],col=seq(1,50),pch=16,cex=2)
+set.seed(10)
+km.ogle <- kmeans(data,25)
+plot(logP,WI,pch=".",col=km.ogle$cluster)
+points(km.ogle$centers[,c(1,5)],col=seq(1,50),pch=16,cex=2)
+
+
+```
+
+```{r }
+rm(list=ls())
+set.seed(10)
+setA <- rmvnorm(1000,c(0,0),matrix(c(3,0,0,3),2,2))
+setB <- rmvnorm(1000,c(3,3),matrix(c(1,0.99,0.99,1),2,2))
+setC <- rmvnorm(1000,c(-1,4),matrix(c(1,-0.9,-0.9,1),2,2))
+mock.data <- rbind(setA,setB,setC)
+plot(mock.data)
+
+km <- kmeans(mock.data,3)
+plot(mock.data,col=km$cluster,pch=16,cex=.5)
+points(km$centers,pch=15,col="orange")
+
+loglikNormal <- function(D,means,Sigmas,cluster){
+  labels <- unique(clusters)
+  n.cl <- length(labels)
+  loglik <- 0
+  for (i in 1:n.cl)
+  {
+  logliki <- apply(means[i,],1,dmvnorm,x=D[cluster==i,],sigma=Sigma[,,i])
+  logliki <- apply(logliki,2,sum)
+  loglik <- loglik+logliki
+  }
+  return(loglik)
+}
+
+# The space of parameters is HUGE: the means, the covariance matrices, and partitions!
+# Solution 1: the EM algorithm
+
+# Let us simplify the problem: assume that the two clusters have the same (unknown) 
+# covariance, that the covariance is diagonal and that the two variances are equal.
+# Then, you have KMEANS!
+
+# Now, let us remove some constraints: the covariance matrices can be arbitrary, and 
+# try to maximize the log-likelihhod. Difficult eh? Then, let us use the EM algorithm.
+
+rc <- sample(1:dim(mock.data)[1],3)
+plot(mock.data,pch=16,cex=.5)
+points(mock.data[rc,],pch=16,col="seagreen",cex=2)
+means <- mock.data[rc,]
+Sigmas <- array(0,dim=c(2,2,3))
+Sigmas[1,1,]=1
+Sigmas[2,2,]=1
+
+E <- function(data,means,Sigmas)
+{
+  n.cl <- dim(means)[1]
+  probs <- matrix(NA,nrow=dim(data)[1],ncol=n.cl)
+    for (i in 1:n.cl)
+  {
+  probs[,i] <- dmvnorm(x=data,mean=means[i,],sigma=Sigmas[,,i])
+
+  }
+  cluster <- max.col(probs)
+  
+  return(cluster)  
+}
+
+cluster <- E(mock.data,means,Sigmas)
+
+points(mock.data,pch=16,cex=.5,col=cluster)
+points(mock.data[rc,],pch=16,col="seagreen",cex=2)
+
+M <- function(data,cluster){
+  n.cl <- length(unique(cluster))
+    for (i in 1:n.cl)
+  {
+      means[i,] <- apply(data[cluster==i,],2,mean)
+      Sigmas[,,i] <- cov(data[cluster==i,])  
+  }
+  M <- list(means=means,covariances=Sigmas)
+  return(M)
+  
+}
+
+parameters <- M(mock.data,cluster)
+points(parameters$means,pch=16,col="orange",cex=2)
+cluster <- E(mock.data,parameters$means,parameters$covariances)
+plot(mock.data,pch=16,cex=.5,col=cluster)
+points(parameters$means,pch=16,col="orange",cex=2)
+
+for (i in 1:50)
+{
+
+parameters <- M(mock.data,cluster)
+cluster.new <- E(mock.data,parameters$means,parameters$covariances)
+ndiff <- sum(cluster!=cluster.new)
+print(ndiff)
+cluster <- cluster.new
+plot(mock.data,pch=16,cex=.5,col=cluster)
+points(parameters$means,pch=16,col="orange",cex=2)
+if(ndiff==0) break
+}
+
+
+
+# Sigma <- matrix(c(1,0,0,1),2,2)
+# print(loglikNormal(mock.data,c(0,0),Sigma))
+# 
+# xvalues <- seq(-3,7,0.1)
+# yvalues <- seq(-3,7,0.1)
+# outer <- expand.grid(xvalues,yvalues)
+# 
+# loglik <- loglikNormal(mock.data,outer,Sigma)
+# col <- SetupPalette(loglik)
+# par(mar=c(5,5,2,6))
+# plot(outer,pch=15,col=col)
+# image.plot(legend.only=TRUE, zlim=range(loglik) , horizontal=FALSE,
+#            legend.width=2, reset.graphics=TRUE, axis.args=list(cex.axis=1,cex.lab=1),
+#            legend.mar=5,col=pal(50))
+# 
+# loglik2 <- t(matrix(loglik,nrow=length(xvalues),ncol=length(yvalues)))
+# contour(xvalues,yvalues,loglik2,add=T,nlevels=25)
+# points(matrix(c(0,3,0,3),2,2),pch="X",col="blue")
+# 
+# loglik <- NULL
+# for (i in seq(0.1,2.0,0.1))
+# {
+#   loglik <- loglikNormal(mock.data,)
+# }
+
+
+```
+
+
+```{r }
+plot(mock.data)
+library("kohonen")
+library("fields")
+cluster <- som(mock.data)
+plot(cluster, type="code")
+plot(cluster, type="changes")
+plot(cluster, type = "property", property = cluster$codes[,2], main=names(cluster$data)[2], palette.name=tim.colors)
+plot(cluster, type="dist.neighbours")
+plot(cluster, type="count")
+
+
+```
+
+
+```{r}
+#clusters <- hclust(dist(iris[, 3:4]))
+#plot(clusters)
+#clusterCut <- cutree(clusters, 3)
+#table(clusterCut, iris$Species)
+
+#clusters <- hclust(dist(iris[, 3:4]), method = 'average')
+#plot(clusters)
+
+```
+
+#############################################################
+
+
+
+
+

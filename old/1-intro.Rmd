@@ -1,0 +1,15 @@
+---
+title: "Viridis Demo"
+output: html_document
+---
+
+<div class="row" style="padding-top: 100px;">
+</div>
+
+* A model (regression or classification)
+
+* The curse of dimensionality
+* More reasons: speed, interpretability, overfitting...
+
+* Look ahead: the contents.
+

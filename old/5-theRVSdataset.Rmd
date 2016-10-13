@@ -1,0 +1,113 @@
+---
+title: "Untitled"
+author: "Luis M. Sarro"
+date: "26 de septiembre de 2016"
+output: html_document
+---
+
+<div class="row" style="padding-top: 100px;">
+</div>
+
+
+## The RVS datasets
+
+### The first dataset
+
+In the following, we will apply a series of feature selection or feature extraction techniques to a dataset taken from the Gaia simulations. This dataset consists of 1000 spectra synthesized from the MARCS [http://marcs.astro.uu.se/] library of stellar atmospheric models. 
+
+This is not the full dataset used to train the Machine Learning algorithms that will run as part of the Gaia Data Processing and Analysis. Only a tiny subset selected to be at the same time illuminating for you, and manageable within the school lecture durations.
+
+It was selected by forcing the stellar metallicities and alpha abundances to be solar, and then sampling randomly in magnitude. Furthermore, the radial velocities and rotational velocities are negligible.
+
+Finally, all spectra have been normalized to unit area. That is, the area under each spectrum is 1 (in the somewhat awkward units of pixel position). We have done this because the actual value of the observed fluxes carry no information on any of the physical parameters (this is not exactly so, but let's assume it for the sake of simplicity). We could have exactly the same star at two wildly different distances and therefore, very different observed fluxes. 
+
+OK. Let us load the spectra and have a first grasp of how they look like.
+
+```{r }
+
+StPa <- read.table("stellarParameters.dat",colClasses="numeric",sep=",")
+names(StPa) <- c("teff","logg","met")
+Spec <- read.table("spectra.dat",sep=",")
+
+library(scales)
+library(fields)
+
+pal <- colorRampPalette(c("yellow","red"),space="rgb")
+SetupPalette<-function(c)
+{
+  nl <- 50
+  palette<-pal(nl)
+  #palette <- tim.colors(nl)
+  #palette <- heat.colors(nl)
+  col <- c-min(c,na.rm=TRUE)
+  col <- col/max(col,na.rm=TRUE)
+  colour <- palette[as.integer(((nl-1)*col)+1)]
+  return(colour)
+}
+
+n <- dim(Spec)[1]
+col <- SetupPalette(StPa[,1])
+
+wv <- as.integer(10*read.table("wavelengths.dat")[1,90:1150])
+
+par(mar=c(6,6,6,6))
+plot(as.numeric(Spec[1,]),ty="l",col=alpha(col[1],0.2),ylim=c(0.0005,0.001), xlab="Pixel Number",ylab="Normalized Flux")
+
+axis(3,seq(0,1000,by=200),labels=wv[1+seq(0,1000,by=200)])
+
+for (i in 2:n)
+{
+  lines(as.numeric(Spec[i,]),col=alpha(col[i],0.2))
+}
+
+image.plot(legend.only=TRUE, zlim= range(StPa[,1],na.rm=T), horizontal=FALSE,
+           legend.width=2, reset.graphics=TRUE, axis.args=list(cex.axis=1,cex.lab=1),
+           legend.mar=5,col=pal(50))
+  
+
+```
+
+So we basically see two things: 
+
+* There are lines that are only present in certain wavelength ranges. If you want a reasonable introduction to the behaviour of lines in stellar spectra, I certainly recommend you the books by D. Gray. For an identification of the lines present in the RVS range, you can have a look at the recent  (article by Recio-Blanco et al)[http://www.aanda.org/articles/aa/pdf/2016/01/aa25030-14.pdf]. 
+* Even for the same temperature, there are very significant variations across spectra
+
+
+Let us look at the other free variable: surface gravity.
+
+``` {r}
+
+mask <- StPa[,1] == 3.9
+
+col <- SetupPalette(StPa[,2])
+
+par(mar=c(6,6,6,6))
+plot(as.numeric(Spec[mask,][1,]),ty="l",col=alpha(col[mask][1],0.2),ylim=c(0.0005,0.001), xlab="Pixel Number",ylab="Normalized Flux")
+
+axis(3,seq(0,1000,by=200),labels=wv[1+seq(0,1000,by=200)])
+
+for (i in 2:sum(mask))
+{
+  lines(as.numeric(Spec[mask,][i,]),col=alpha(col[mask][i],0.2))
+}
+
+image.plot(legend.only=TRUE, zlim= range(StPa[mask,2],na.rm=T), horizontal=FALSE,
+           legend.width=2, reset.graphics=TRUE, axis.args=list(cex.axis=1,cex.lab=1),
+           legend.mar=5,col=pal(50))
+
+save.image()
+
+```
+
+Let us keep this very simplified dataset (40 spectra corresponding to stars of $log(T_{\rm eff})=3.9$ and only 6 different values of the surface gravity)
+
+```{r}
+
+small.spec <- Spec[mask,]
+small.param <- StPa[mask,]
+  
+```
+
+
+
+

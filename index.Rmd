@@ -1,0 +1,23 @@
+---
+title: "Index"
+output: html_document
+---
+
+<style type="text/css">
+.title {
+  display: none;
+}
+
+#getting-started img {
+#  margin-right: 10px;
+#}
+
+</style>
+
+<div class="row" style="padding-top: 200px;">
+</div>
+
+```{r}
+rmarkdown::clean_site()
+rmarkdown::render_site()
+```

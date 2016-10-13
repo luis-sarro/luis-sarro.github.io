@@ -1,0 +1,16 @@
+---
+title: "Feature Extraction"
+author: "Luis M. Sarro"
+date: "27 de septiembre de 2016"
+output: html_document
+---
+
+<div class="row" style="padding-top: 100px;">
+</div>
+
+## Decomposition in vector space bases
+
+```{r }
+```
+
+## Neural Networks: Boltzmann machines, restricted Boltzmann machines -> Deep Believe Networks, Deep learning. 

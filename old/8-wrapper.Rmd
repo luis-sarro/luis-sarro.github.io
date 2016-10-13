@@ -1,0 +1,40 @@
+---
+title: "8-wrappers"
+author: "Luis M. Sarro"
+date: "27 de septiembre de 2016"
+output: html_document
+---
+
+
+<div class="row" style="padding-top: 100px;">
+</div>
+
+
+```{r }
+
+library(rpart)
+subset.wrapperscore <- function(subset){
+
+  #k-fold cross validation
+  k <- 5
+  splits <- runif(nrow(df))
+
+  results = sapply(1:k, function(i) {
+    test.idcs <- (splits >= (i - 1) / k) & (splits < i / k)
+    train.idcs <- !test.idcs
+    test <- df[test.idcs, , drop=FALSE]
+    train <- df[train.idcs, , drop=FALSE]
+#    model <- rpart(as.simple.formula(subset, "teff"), train)
+   model <- lm(as.simple.formula(subset, "teff"), train)
+#   model <- naive.bayes(train,"teff",subset)
+    error.rate = sqrt(sum((test$teff-predict(model, test))^2) / nrow(test))
+    return(-log10(error.rate))
+  })
+  
+  #print(subset)
+  #print(mean(results))
+  return(mean(results))
+}
+
+
+```

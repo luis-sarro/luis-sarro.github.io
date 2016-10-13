@@ -1,0 +1,13 @@
+name: "ICCUB School: Machine Learning and Data Mining in Physics"
+navbar:
+  title: "ICCUB School: Machine Learning and Data Mining in Physics"
+  left:
+    - text: "Home"
+      href: index.html
+    - text: "Feature Extraction/Selection"
+      href: AFeatureExtractionSelection.html
+    - text: "Unsupervised Classification"
+      href: BUnsupervisedClassification.html
+output_dir: "."      
+      
+      

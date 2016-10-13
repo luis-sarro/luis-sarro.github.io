@@ -1,0 +1,28 @@
+---
+title: "data4clustering"
+author: "Luis M. Sarro"
+date: "27 de septiembre de 2016"
+output: html_document
+---
+
+
+
+<div class="row" style="padding-top: 100px;">
+</div>
+
+
+```{r }
+data <- read.table("OGLE.dat",sep=",",header=T)
+attach(data)
+
+plot(logP,WI,pch=".")
+
+mask <- (logP >0.754 & logP < 0.76) | (logP >0.827 & logP < 0.833) | (logP >0.872 & logP < 0.873)
+data <- data[!mask,]
+attach(data)
+plot(data[,1],data[,5],pch=".")
+
+
+```
+
+

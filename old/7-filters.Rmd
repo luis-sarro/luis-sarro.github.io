@@ -1,0 +1,146 @@
+---
+title: "6-extraction"
+author: "Luis M. Sarro"
+date: "27 de septiembre de 2016"
+output: html_document
+---
+
+
+<div class="row" style="padding-top: 100px;">
+</div>
+
+```{r }
+
+library(fields)
+library(FSelector)
+load(".RData")
+
+
+teff <- StPa[,1]
+df <- data.frame(cbind(Spec,teff))
+
+# For discrete variables (try with the 2D/3D XOR problem)
+#chi.squared(class~.,data1)
+
+# Pearson's linear correlation coefficient
+pearson.score <- linear.correlation(teff~.,df)
+
+plot.score <- function(score){
+col <- SetupPalette(score[,1])
+par(mar=c(6,6,6,6))
+plot(as.numeric(Spec[1,]),pch=".",col=col,ylim=c(0.0005,0.001), xlab="Pixel Number",ylab="Normalized Flux")
+
+axis(3,seq(0,1000,by=200),labels=wv[1+seq(0,1000,by=200)])
+
+for (i in 2:dim(Spec)[1])
+{
+  points(as.numeric(Spec[i,]),col=col,pch=".")
+}
+
+image.plot(legend.only=TRUE, zlim= range(score[,1],na.rm=T), horizontal=FALSE,
+           legend.width=2, reset.graphics=TRUE, axis.args=list(cex.axis=1,cex.lab=1),
+           legend.mar=5,col=pal(50))
+}
+plot.score(pearson.score)
+
+```
+
+
+```{r }
+# Spearman's correlation
+spearman.score <- rank.correlation(teff~.,df)
+plot.score(spearman.score)
+```
+
+Now, let us plot one and the other:
+
+``` {r }
+plot(pearson.score[,1],spearman.score[,1],pch=16,xlab="Pearson's Score", ylab="Spearman's score",col="blue",cex=.5)
+```
+
+
+```{r }
+# Information Gain
+infogain.score <- information.gain(teff~.,df)
+plot.score(infogain.score)
+```
+```{r }
+# Gain Ratio
+gainratio.score <- gain.ratio(teff~.,df)
+plot.score(gainratio.score)
+```
+```{r }
+#Symmetric Uncertainty
+symuncert.score <- symmetrical.uncertainty(teff~.,df)
+plot.score(symuncert.score)
+```
+```{r }
+plot(cbind(infogain.score,gainratio.score,symuncert.score),c("Info Gain","Gain Ratio","Symm Uncert"))
+```
+```{r }
+plot(symuncert.score[,1],pearson.score[,1],pch=16,col="blue",cex=.7)
+```
+
+```{r }
+plot(gainratio.score[,1],pearson.score[,1],pch=16,col="blue",cex=.7)
+```
+
+## Subset selection
+
+```{r}
+
+attributes <- names(df)[-dim(df)[2]]
+
+subset.score <- function(subset){
+
+  n <- length(subset)
+  f <- as.simple.formula(subset,"teff")
+  r1 <- linear.correlation(f,df)
+  if (n == 1) {return(r1[1,1])}
+  mask <- match(subset,names(df))
+  tmp <- df[,mask]  
+  c <- cor(tmp)
+  r2 <- c[upper.tri(c)]
+  score <-  (n*mean(r1[,1]))/(sqrt(n+(n*(n-1)*mean(r2))))   
+  return(score)
+  }
+
+```
+
+
+## Forward search
+```{r}
+#FS.subset <- forward.search(attributes,subset.score)
+```
+
+
+## Backward search
+
+```{r}
+#BS.subset <- backward.search(attributes,subset.score)
+```
+## Best first
+
+Best first explores the tree and keeps a (possibly abridged) list of explored nodes. Each time, the best proposal in the list is chosen for expansion by adding one more predictor. 
+
+```{r}
+#BF.subset <- best.first.search(attributes, subset.score)
+```
+
+## Hill climbing
+
+```{r}
+#HC.subset <- hill.climbing.search(attributes, subset.score)
+```
+
+## Exhaustive search
+
+```{r}
+# DON'T RUN! IT TAKES AGES!
+#ES.subset <- exhaustive.search(attributes, subset.score)
+```
+## CFS
+
+## Consistency
+
+
