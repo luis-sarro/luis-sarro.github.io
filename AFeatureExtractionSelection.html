@@ -305,6 +305,18 @@ div.tocify {
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
+<html>
+
+<head>
+<title>Title</title>
+</head>
+
+<body>
+
+<img src="images/Footnote.png" alt="School Footer">
+
+</body>
+</html>
 
 <div class="fluid-row" id="header">
 
@@ -383,7 +395,7 @@ logVsphere &lt;-<span class="st"> </span><span class="kw">log</span>(<span class
 </div>
 <div id="the-rvs-data-set" class="section level2">
 <h2>The RVS data set</h2>
-<p>In the following, we will apply a series of feature selection or feature extraction techniques to a dataset taken from the Gaia simulations. This dataset consists of 1000 spectra synthesized from the MARCS [<a href="http://marcs.astro.uu.se/" class="uri">http://marcs.astro.uu.se/</a>] library of stellar atmospheric models.</p>
+<p>In the following, we will apply a series of feature selection or feature extraction techniques to a dataset taken from the Gaia simulations. This dataset consists of 1000 spectra synthesized from the <a href="http://marcs.astro.uu.se/">MARCS</a> library of stellar atmospheric models.</p>
 <p>This is not the full dataset used to train the Machine Learning algorithms that will run as part of the Gaia Data Processing and Analysis. Only a tiny subset selected to be at the same time illuminating for you, and manageable within the school lecture durations.</p>
 <p>It was selected by forcing the stellar metallicities and alpha abundances to be solar, and then sampling randomly in magnitude. Furthermore, the radial velocities and rotational velocities are negligible.</p>
 <p>Finally, all spectra have been normalized to unit area. That is, the area under each spectrum is 1 (in the somewhat awkward units of pixel position). We have done this because the actual value of the observed fluxes carry no information on any of the physical parameters (this is not exactly so, but let’s assume it for the sake of simplicity). We could have exactly the same star at two wildly different distances and therefore, very different observed fluxes.</p>
@@ -629,6 +641,7 @@ small.param &lt;-<span class="st"> </span>StPa[mask,]</code></pre>
 </div>
 <div id="the-filter-approach" class="section level2">
 <h2>The filter approach</h2>
+<p>The filter approach is based on ranking predicting variables according to a Figure-of-Merit which is independent of the classification or regression scheme that will be applied to them. There are several FoMs which we will now review.</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">load</span>(<span class="st">&quot;.RData&quot;</span>)
 <span class="kw">library</span>(FSelector)
 <span class="kw">library</span>(scales)
@@ -926,7 +939,6 @@ subset.wrapperscore &lt;-<span class="st"> </span>function(subset){
     train &lt;-<span class="st"> </span>df[train.idcs, , drop=<span class="ot">FALSE</span>]
     model &lt;-<span class="st"> </span><span class="kw">rpart</span>(<span class="kw">as.simple.formula</span>(subset, <span class="st">&quot;teff&quot;</span>), train)
 <span class="co">#   model &lt;- lm(as.simple.formula(subset, &quot;teff&quot;), train)</span>
-<span class="co">#   model &lt;- naive.bayes(train,&quot;teff&quot;,subset)</span>
     error.rate =<span class="st"> </span><span class="kw">sqrt</span>(<span class="kw">sum</span>((test$teff-<span class="kw">predict</span>(model, test))^<span class="dv">2</span>) /<span class="st"> </span><span class="kw">nrow</span>(test))
     <span class="kw">return</span>(-<span class="kw">log10</span>(error.rate))
   })
@@ -4094,6 +4106,18 @@ pch=<span class="fl">0.6</span>+(StPa[,<span class="dv">2</span>]+<span class="d
 </div>
 </div>
 
+<html>
+
+<head>
+<title>Title</title>
+</head>
+
+<body>
+
+<img src="images/Footnote.png" alt="School Footer">
+
+</body>
+</html>
 
 
 </div>

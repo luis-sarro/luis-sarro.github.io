@@ -6,6 +6,10 @@ output:
     toc: true
     toc_float:
       collapsed: false
+    include:
+      before_body: [footer.html]
+      after_body: [footer.html]
+
 ---
 
 ```{r setup, include=FALSE}
@@ -115,7 +119,7 @@ There are other ways to visualize this curse-of-dimensionality. But in practice 
 
 ## The RVS data set
 
-In the following, we will apply a series of feature selection or feature extraction techniques to a dataset taken from the Gaia simulations. This dataset consists of 1000 spectra synthesized from the MARCS [http://marcs.astro.uu.se/] library of stellar atmospheric models. 
+In the following, we will apply a series of feature selection or feature extraction techniques to a dataset taken from the Gaia simulations. This dataset consists of 1000 spectra synthesized from the [MARCS](http://marcs.astro.uu.se/) library of stellar atmospheric models. 
 
 This is not the full dataset used to train the Machine Learning algorithms that will run as part of the Gaia Data Processing and Analysis. Only a tiny subset selected to be at the same time illuminating for you, and manageable within the school lecture durations.
 
@@ -270,7 +274,7 @@ These are all theoretical definitions. In practice, because the training set is 
 
 ## The filter approach
 
-
+The filter approach is based on ranking predicting variables according to a Figure-of-Merit which is independent of the classification or regression scheme that will be applied to them. There are several FoMs which we will now review.
 
 ```{r }
 
@@ -648,7 +652,6 @@ subset.wrapperscore <- function(subset){
     train <- df[train.idcs, , drop=FALSE]
     model <- rpart(as.simple.formula(subset, "teff"), train)
 #   model <- lm(as.simple.formula(subset, "teff"), train)
-#   model <- naive.bayes(train,"teff",subset)
     error.rate = sqrt(sum((test$teff-predict(model, test))^2) / nrow(test))
     return(-log10(error.rate))
   })

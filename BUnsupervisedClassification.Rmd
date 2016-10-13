@@ -6,8 +6,9 @@ output:
     toc: true
     toc_float:
       collapsed: false
-    includes:
-      before_body: [include_header.html]
+    include:
+      before_body: [footer.html]
+      after_body: [footer.html]
 
 ---
 
